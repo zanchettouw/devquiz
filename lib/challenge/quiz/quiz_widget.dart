@@ -3,16 +3,15 @@ import 'package:devquiz/core/app_text_styles.dart';
 import 'package:devquiz/shared/models/answers_model.dart';
 import 'package:devquiz/shared/models/question_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class QuizWidget extends StatefulWidget {
   final QuestionModel question;
-  final VoidCallback onChange;
+  final ValueChanged<bool> onSelected;
 
   const QuizWidget({
     Key? key,
     required this.question,
-    required this.onChange,
+    required this.onSelected,
   }) : super(key: key);
 
   @override
@@ -42,14 +41,14 @@ class _QuizWidgetState extends State<QuizWidget> {
           for (var i = 0; i < widget.question.answers.length; i++)
             AnswerWidget(
               answer: answer(i),
-              isSelected: indexSelected == i,
               disabled: indexSelected != -1,
-              onTap: () {
+              isSelected: indexSelected == i,
+              onTap: (value) {
                 indexSelected = i;
-                widget.onChange();
                 setState(() {});
-                Future.delayed(Duration(seconds: 2))
-                    .then((value) => widget.onChange());
+                Future.delayed(Duration(seconds: 2)).then(
+                  (_) => widget.onSelected(value),
+                );
               },
             ),
         ],
